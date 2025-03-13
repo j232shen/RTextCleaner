@@ -39,11 +39,13 @@ summarize <- function(text_inputs,
                       api_key=Sys.getenv("GEMINI_API_KEY"),
                       model = "gemini-2.0-flash") {
 
+  # =================================== COPY ===================================
   # check for empty input and input type
   check_valid_inputs(text_inputs)
 
   # check for api key in environment; prompt for key if none exists
   check_api_key(api_key)
+  # ============================================================================
 
   model_query <- paste0(model, ":generateContent")
 
@@ -86,8 +88,10 @@ summarize <- function(text_inputs,
       )
     )
 
+    # ================================== COPY ==================================
     # check for response error
     check_response_status(response)
+    # ==========================================================================
 
     # extract candidates
     candidates <- content(response)$candidates
