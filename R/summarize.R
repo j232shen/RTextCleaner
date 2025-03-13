@@ -33,27 +33,17 @@ assign("request_times", numeric(0), envir = .GlobalEnv)
 #' summarize(text_samples)
 #' }
 
-# Function to call Gemini API for a column of text inputs
 summarize <- function(text_inputs,
                       temperature=1,
                       max_output_tokens=1024,
                       api_key=Sys.getenv("GEMINI_API_KEY"),
                       model = "gemini-2.0-flash") {
 
-  # check for empty input
-  if (length(text_inputs) < 1) {
-    stop("Error: text_inputs cannot be empty. Please provide at least one input.")
-  }
+  # check for empty input and input type
+  check_valid_inputs(text_inputs)
 
-  # check for incorrect input type
-  if (!is.character(text_inputs)) {
-    stop("Error: text_inputs must be a character vector.")
-  }
-
-  if(nchar(api_key) < 1) {
-    api_key <- readline("Paste your API key here: ")
-    Sys.setenv(GEMINI_API_KEY = api_key)
-  }
+  # check for api key in environment; prompt for key if none exists
+  check_api_key(api_key)
 
   model_query <- paste0(model, ":generateContent")
 
@@ -96,21 +86,10 @@ summarize <- function(text_inputs,
       )
     )
 
-    # print(content(response))
+    # check for response error
+    check_response_status(response)
 
-    if(response$status_code != 200) {
-      error_message <- content(response)$error$message
-
-      print(paste("Error - Status Code:", response$status_code))
-      print(content(response))
-
-      if (error_message == "API key not valid. Please pass a valid API key.") {
-        Sys.unsetenv("GEMINI_API_KEY")
-      }
-
-      stop(paste("Error:", error_message))
-    }
-
+    # extract candidates
     candidates <- content(response)$candidates
 
     # loop through each candidate and extract the text content
@@ -128,30 +107,3 @@ summarize <- function(text_inputs,
 
   return(responses)
 }
-
-# testing function
-# arxiv = read.csv('../data/arxiv_data.csv')
-# random_samples <- arxiv[sample(nrow(arxiv), 20), ]
-# text_inputs = random_samples$summaries
-
-# text_inputs = c("Tensor networks are efficient factorisations of high dimensional tensors into
-# a network of lower order tensors. They have been most commonly used to model
-# entanglement in quantum many-body systems and more recently are witnessing
-# increased applications in supervised machine learning. In this work, we
-# formulate image segmentation in a supervised setting with tensor networks. The
-# key idea is to first lift the pixels in image patches to exponentially high
-# dimensional feature spaces and using a linear decision hyper-plane to classify
-# the input pixels into foreground and background classes. The high dimensional
-# linear model itself is approximated using the matrix product state (MPS) tensor
-# network. The MPS is weight-shared between the non-overlapping image patches
-# resulting in our strided tensor network model. The performance of the proposed
-# model is evaluated on three 2D- and one 3D- biomedical imaging datasets. The
-# performance of the proposed tensor network segmentation model is compared with
-# relevant baseline methods. In the 2D experiments, the tensor network model
-# yeilds competitive performance compared to the baseline methods while being
-# more resource efficient.")
-
-# empty input
-# text_inputs <- c(TRUE, "hello")
-# result <- summarize(text_inputs)
-# print(result)
