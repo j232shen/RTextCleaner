@@ -130,7 +130,7 @@ summarize <- function(text_inputs,
 }
 
 # testing function
-# arxiv = read.csv('arxiv_data.csv')
+# arxiv = read.csv('../data/arxiv_data.csv')
 # random_samples <- arxiv[sample(nrow(arxiv), 20), ]
 # text_inputs = random_samples$summaries
 
