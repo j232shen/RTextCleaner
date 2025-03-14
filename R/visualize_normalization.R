@@ -10,8 +10,8 @@
 tokenize_text <- function(text_inputs) {
 
   # handle NULL or empty input
-  if(is.null(text) || length(text) == 0) {
-    return(character(0))
+  if(is.null(text_inputs) || length(text_inputs) == 0) {
+    stop("Input is empty or NULL.")
   }
 
   # process each element in the vector
@@ -55,9 +55,9 @@ tokenize_text <- function(text_inputs) {
 #' @export
 visualize_normalization <- function(top_n = 20, original_text = NULL, normalized_text = NULL) {
 
-  # If text vectors aren't explicitly provided, use the last normalization result
+  # if text vectors aren't explicitly provided, use the last normalization result
   if(is.null(original_text) || is.null(normalized_text)) {
-    # Get from environment variable where the last normalization was stored
+    # get from environment variable where the last normalization was stored
     last_norm <- get_last_normalization()
 
     if(is.null(last_norm)) {
@@ -68,45 +68,69 @@ visualize_normalization <- function(top_n = 20, original_text = NULL, normalized
     normalized_text <- last_norm$normalized
   }
 
-  # Create a data frame of the original and normalized texts
+  if (length(original_text) == 0 || length(normalized_text) == 0) {
+    stop("Original and normalized text vectors must have the same length.")
+  }
+
+  if (length(original_text) != length(normalized_text)) {
+    stop("Original and normalized text vectors must have the same length.")
+  }
+
+  # check if both are character vectors
+  if (!is.character(original_text)) {
+    stop("Original text must be a character vector.")
+  }
+
+  if (!is.character(normalized_text)) {
+    stop("Normalized text must be a character vector.")
+  }
+
+  # create a data frame of the original and normalized texts
   text_df <- data.frame(
     original = original_text,
     normalized = normalized_text,
     stringsAsFactors = FALSE
   )
 
-  # Find instances where the text changed
+  # find instances where the text changed
   text_df$changed <- text_df$original != text_df$normalized
 
-  # Calculate what percentage of texts were modified
+  # calculate what percentage of texts were modified
   pct_changed <- sum(text_df$changed) / nrow(text_df) * 100
 
-  # Find examples of transformations
+  # find examples of transformations
   changed_df <- text_df[text_df$changed, ]
 
-  # Extract word-level changes
+  # exit early if no changes
+  if (nrow(changed_df) == 0) {
+    return(ggplot2::ggplot() +
+             ggplot2::annotate("text", x = 0, y = 0, label = "No significant text changes found") +
+             ggplot2::theme_void())
+  }
+
+  # extract word-level changes
   changes <- list()
 
   for(i in 1:min(nrow(changed_df), 100)) {  # Process up to 100 changed texts
     orig <- changed_df$original[i]
     norm <- changed_df$normalized[i]
 
-    # Tokenize both versions
+    # tokenize both versions
     orig_tokens <- tokenize_text(orig)
     norm_tokens <- tokenize_text(norm)
 
-    # Simple approach: find tokens that exist in only one version
+    # find tokens that exist in only one version
     only_in_orig <- setdiff(orig_tokens, norm_tokens)
     only_in_norm <- setdiff(norm_tokens, orig_tokens)
 
-    # Add to our collection of changes
+    # add to collection of changes
     for(old_token in only_in_orig) {
-      # Find best match in normalized tokens
+      # find best match in normalized tokens
       if(length(only_in_norm) > 0) {
         distances <- adist(old_token, only_in_norm)
         best_match <- only_in_norm[which.min(distances)]
 
-        # Only record if reasonably close
+        # only record if reasonably close
         if(min(distances) <= nchar(old_token) * 0.5) {
           changes[[length(changes) + 1]] <- data.frame(
             original = old_token,
@@ -119,41 +143,34 @@ visualize_normalization <- function(top_n = 20, original_text = NULL, normalized
     }
   }
 
-  # Combine all changes
-  if(length(changes) > 0) {
-    all_changes <- do.call(rbind, changes)
+  # combine all changes
+  all_changes <- do.call(rbind, changes)
 
-    # Count how many times each transformation occurred
-    changes_table <- table(paste(all_changes$original, "→", all_changes$normalized))
-    changes_df <- data.frame(
-      transformation = names(changes_table),
-      count = as.numeric(changes_table)
+  # count how many times each transformation occurred
+  changes_table <- table(paste(all_changes$original, "→", all_changes$normalized))
+  changes_df <- data.frame(
+    transformation = names(changes_table),
+    count = as.numeric(changes_table)
+  )
+
+  # extract original and normalized components
+  changes_df$original <- sapply(strsplit(changes_df$transformation, " → "), `[`, 1)
+  changes_df$normalized <- sapply(strsplit(changes_df$transformation, " → "), `[`, 2)
+
+  # get top transformations
+  top_changes <- changes_df[order(-changes_df$count), ][1:min(top_n, nrow(changes_df)), ]
+
+  # create transformation frequency plot
+  plt <- ggplot2::ggplot(top_changes, ggplot2::aes(x = reorder(transformation, count), y = count)) +
+    ggplot2::geom_col(fill = "steelblue") +
+    ggplot2::coord_flip() +
+    ggplot2::theme_minimal() +
+    ggplot2::labs(
+      title = "Top Text Transformations",
+      subtitle = paste0(round(pct_changed, 1), "% of texts were modified"),
+      x = "Transformation",
+      y = "Frequency"
     )
 
-    # Extract original and normalized components
-    changes_df$original <- sapply(strsplit(changes_df$transformation, " → "), `[`, 1)
-    changes_df$normalized <- sapply(strsplit(changes_df$transformation, " → "), `[`, 2)
-
-    # Get top transformations
-    top_changes <- changes_df[order(-changes_df$count), ][1:min(top_n, nrow(changes_df)), ]
-
-    # Create first plot (transformation frequency)
-    p1 <- ggplot2::ggplot(top_changes, ggplot2::aes(x = reorder(transformation, count), y = count)) +
-      ggplot2::geom_col(fill = "steelblue") +
-      ggplot2::coord_flip() +
-      ggplot2::theme_minimal() +
-      ggplot2::labs(
-        title = "Top Text Transformations",
-        subtitle = paste0(round(pct_changed, 1), "% of texts were modified"),
-        x = "Transformation",
-        y = "Frequency"
-      )
-
-    return(p1)
-  } else {
-    # If no significant changes found
-    return(ggplot2::ggplot() +
-             ggplot2::annotate("text", x = 0, y = 0, label = "No significant text changes found") +
-             ggplot2::theme_void())
-  }
+  return(plt)
 }

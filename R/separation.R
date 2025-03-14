@@ -45,8 +45,8 @@ process_pure_text <- function(text) {
 
   text_clean <- gsub("\\s+", " ", text)
   text_clean <- gsub("\\n", " ", text_clean)
-
   json_text <- gsub("[^[:print:]]", "", text_clean)
+  json_text <- gsub("\n", "", json_text)
 
   if (!validate(json_text)) {
     warning("Invalid JSON format. Returning original text.")
@@ -67,12 +67,15 @@ process_mixed_code <- function(text) {
   # Step 2: Remove excess whitespace
   text <- gsub("\\s+", " ", text)
 
-  #print(text)
+  print(text)
   text_part <- sub('.*"text": "(.*?)".*', "\\1", text)
   code_part <- sub('.*"code": "(.*?)".*', "\\1", text)
+  print(text_part)
+  print(code_part)
   text_part <- gsub("n", "\n", text_part)
   code_part <- gsub("n", "\n", code_part)
 
+  code_part <- str_replace_all(code_part, "```[a-zA-Z]*\\n|```", "")
 
   return(list(text = text_part, code = code_part))
 
@@ -83,8 +86,11 @@ process_code <- function(text) {
   # Assuming the input text is a JSON block, we clean it up
   text_clean <- gsub("```json\\n|\\n```", "", text)  # Remove JSON block markers
   text_clean <- gsub("\\n", " ", text_clean)  # Replace newlines with spaces
+  parsed_text <- fromJSON(text_clean)
 
-  return(list(text = "", code = text_clean))
+  code_only <- parsed_text$code
+
+  return(list(text = "", code = code_only))
 }
 
 
@@ -108,9 +114,15 @@ separate_code_prompt <- function(text_inputs,
                                  max_output_tokens = 1024,
                                  model = "gemini-2.0-flash",
                                  api_key = Sys.getenv("GEMINI_API_KEY")) {
-  if (nchar(api_key) < 1) {
-    stop("API Key is missing. Set it using Sys.setenv(GEMINI_API_KEY = 'your_api_key')")
-  }
+
+  # =================================== COPY ===================================
+  # check for empty input and input type
+  check_valid_inputs(text_inputs)
+
+  # check for api key in environment; prompt for key if none exists
+  check_api_key(api_key)
+  # ============================================================================
+
 
   model_query <- paste0(model, ":generateContent")
   url <- paste0("https://generativelanguage.googleapis.com/v1beta/models/", model_query, "?key=", api_key)
@@ -329,13 +341,13 @@ separate_code_prompt <- function(text_inputs,
       return(NULL)
     })
 
-    if (is.null(response) || response$status_code != 200) {
-      warning("Error - API request failed with status: ", response$status_code)
-      next
-    }
+    # ================================== COPY ==================================
+    # check for response error
+    check_response_status(response)
+    # ==========================================================================
 
     candidates <- content(response)$candidates
-
+    #print(str(candidates))
     if (length(candidates) > 0 && !is.null(candidates[[1]]$content$parts[[1]]$text)) {
       json_string <- candidates[[1]]$content$parts[[1]]$text[1]
 
@@ -362,9 +374,34 @@ return(responses)
 
  #result <- separate_code_prompt(text_inputs)
  #print(result)
+#example_text <- c(
+#  "iob, ents = self._filter_coref_mismatches(iob, ents, prons)",
+#  "iob = self._fix_iob_seqs(iob)"
+#)
 
 
+#text_inputs <- paste(example_text, collapse = "\n")
+#result <- separate_code_prompt(text_inputs)
+#print(result)
+
+#cat(result$text)
 
 
+#example_text <- c("What is the benefit in using this approach:",
+#                    "```",
+#                  "otelAgent, err := NewInstance('otel-agent')",
+#                  "if err := wrapError(err, 'error creating otel-agent instance'); err != nil {",
+#                  "return nil, err",
+#                  "}",
+#                  "```")
+#text_inputs <- paste(example_text, collapse = "\n")
+#result <- separate_code_prompt(text_inputs)
+#print(result)
 
+#text_inputs <- c("Here is a simple Python function:\n```python\ndef add(a, b):\n    return a + b\n```")
+#result <- separate_code_prompt(text_inputs)
+#print(result)
 
+#text_inputs <-  c("This is how you define a simple CSS rule:\n```css\np { color: blue; font-size: 14px; }\n```")
+#result <- separate_code_prompt(text_inputs)
+#print(result)
