@@ -32,19 +32,29 @@ gemini_sentiment_analysis <- function(text_inputs,
                                       api_key = Sys.getenv("GEMINI_API_KEY"),
                                       model = "gemini-2.0-flash") {
 
+  # Validate API key
   if (nchar(api_key) < 1) {
     api_key <- readline("Paste your API key here: ")
     Sys.setenv(GEMINI_API_KEY = api_key)
   }
 
+  # Validate input type
+  if (!is.character(text_inputs)) {
+    stop("Error: text_inputs must be a character vector.")
+  }
+
+  # Check for empty input
+  if (length(text_inputs) == 0) {
+    stop("Error: text_inputs cannot be empty.")
+  }
+
   model_query <- paste0(model, ":generateContent")
-
-  request_times <- numeric(0)
-
   responses <- character(length(text_inputs))
 
   for (idx in seq_along(text_inputs)) {
     text_input <- text_inputs[idx]
+
+    # Define prompt
     full_prompt <- paste0(
       "TASK: Analyze the sentiment of the given text and classify it as **Positive, Neutral, or Negative**.
 
@@ -77,6 +87,12 @@ gemini_sentiment_analysis <- function(text_inputs,
     print(paste("Processing", idx, "of", length(text_inputs)))
 
     # Ensure we don't exceed 15 requests per minute
+    if (exists("request_times", envir = .GlobalEnv)) {
+      request_times <- get("request_times", envir = .GlobalEnv)
+    } else {
+      request_times <- numeric(0)
+    }
+
     current_time <- Sys.time()
     if (length(request_times) == 15) {
       time_since_first_request <- as.numeric(difftime(current_time, request_times[1], units = "secs"))
@@ -87,7 +103,7 @@ gemini_sentiment_analysis <- function(text_inputs,
       }
     }
 
-    # make the request
+    # Make API request
     response <- httr::POST(
       url = paste0("https://generativelanguage.googleapis.com/v1beta/models/", model_query),
       query = list(key = api_key),
@@ -96,7 +112,7 @@ gemini_sentiment_analysis <- function(text_inputs,
       body = list(
         contents = list(
           parts = list(
-            list(text = full_prompt) # prompt integrates user input
+            list(text = full_prompt)
           )),
         generationConfig = list(
           temperature = temperature,
@@ -105,29 +121,34 @@ gemini_sentiment_analysis <- function(text_inputs,
       )
     )
 
-    if(response$status_code>200) {
-      stop(paste("Error - ", content(response)$error$message))
+    # Handle API response errors
+    if (response$status_code != 200) {
+      response_content <- httr::content(response)
+      error_message <- if (!is.null(response_content$error$message)) response_content$error$message else "Unknown API error"
+      stop(paste("Error -", error_message))
     }
 
-    candidates <- content(response)$candidates
-    outputs <- unlist(lapply(candidates, function(candidate) candidate$content$parts))
-
-    return(gsub("\n$", "", outputs))
-
-    for (candidate in candidates) {
-      response_text <- gsub("\n", "", candidate$content$parts[[1]]$text)
-      responses[idx] <- response_text
+    # Extract response
+    response_content <- httr::content(response)
+    if (is.null(response_content$candidates) || length(response_content$candidates) == 0 ||
+        is.null(response_content$candidates[[1]]$content$parts[[1]]$text)) {
+      stop("Error: Unexpected response format from API")
     }
 
-    # Record the timestamp of the request
-    request_times <<- c(request_times, current_time)
+    # Store cleaned text
+    responses[idx] <- gsub("\n", "", response_content$candidates[[1]]$content$parts[[1]]$text)
+
+    # Record request time
+    request_times <- c(request_times, current_time)
     if (length(request_times) > 15) {
-      request_times <<- request_times[-1]
+      request_times <- request_times[-1]
     }
+    assign("request_times", request_times, envir = .GlobalEnv)
   }
 
   return(responses)
 }
+
 
 # text_input <- "im getting on borderlands and i will murder you all ,"
 # cat("im getting on borderlands and i will murder you all\n➡️", gemini_sentiment_analysis(text_input_1))
