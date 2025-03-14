@@ -25,7 +25,6 @@ assign("request_times", numeric(0), envir = .GlobalEnv)
 #' normalized_text <- gemini_text_normalization(text_samples)
 #' print(normalized_text)
 
-# gemini_text_normalization
 normalize <- function(text_inputs,
                                       temperature = 1,
                                       max_output_tokens = 1024,
