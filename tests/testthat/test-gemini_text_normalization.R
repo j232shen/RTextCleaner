@@ -74,8 +74,6 @@ test_that("gemini_text_normalization handles invalid API key error", {
 })
 
 
-
-
 test_that("gemini_text_normalization throws an error for empty input", {
   expect_error(gemini_text_normalization(character(0)), "Error: text_inputs cannot be empty")
 })
