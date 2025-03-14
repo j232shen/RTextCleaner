@@ -15,7 +15,7 @@ We welcome all contributions to this project! If you notice a bug, have a featur
 ## Responsibilities
 
 - Jingran Zhao - Separation of Code and Text
-- Skylar Shao - Remove Noise, Text Normalization and Sentiment Analysus
+- Skylar Shao - Remove Noise, Text Normalization and Sentiment Analysis
 - Jane Shen - Text Simplification & Token Frequency Visualization (Before vs. After)
 
 ## Code of Conduct
