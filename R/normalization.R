@@ -28,7 +28,7 @@ assign("request_times", numeric(0), envir = .GlobalEnv)
 #' normalized_text <- gemini_text_normalization(text_samples)
 #' print(normalized_text)
 
-gemini_text_normalization <- function(text_inputs,
+normalize <- function(text_inputs,
                                       temperature = 1,
                                       max_output_tokens = 1024,
                                       api_key = Sys.getenv("GEMINI_API_KEY"),
@@ -51,6 +51,7 @@ gemini_text_normalization <- function(text_inputs,
   }
 
   model_query <- paste0(model, ":generateContent")
+
   responses <- character(length(text_inputs))
 
   for (idx in seq_along(text_inputs)) {
@@ -149,6 +150,8 @@ gemini_text_normalization <- function(text_inputs,
     }
     assign("request_times", request_times, envir = .GlobalEnv)
   }
+
+  store_normalization_result(text_inputs, responses) # store in environment for visualization
 
   return(responses)
 }
