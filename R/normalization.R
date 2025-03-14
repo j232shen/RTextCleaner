@@ -28,7 +28,7 @@ assign("request_times", numeric(0), envir = .GlobalEnv)
 #' normalized_text <- gemini_text_normalization(text_samples)
 #' print(normalized_text)
 
-normalize <- function(text_inputs,
+gemini_text_normalization <- function(text_inputs,
                                       temperature = 1,
                                       max_output_tokens = 1024,
                                       api_key = Sys.getenv("GEMINI_API_KEY"),
