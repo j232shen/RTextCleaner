@@ -1,5 +1,7 @@
 library(testthat)
 library(httr)
+library(mockery)
+library(jsonlite)
 
 test_input_1 <- c("I love pizza, sushi, and burgers!")
 test_input_2 <- c("I hate horror movies. They're terrible.", "My top 3 movies are Inception, The Matrix, and Interstellar.")
@@ -54,7 +56,7 @@ test_that("gemini_sentiment_analysis handles invalid API key error", {
   original_api_key <- Sys.getenv("GEMINI_API_KEY")
   on.exit(Sys.setenv(GEMINI_API_KEY = original_api_key))
 
-  Sys.unsetenv("GEMINI_API_KEY")
+  Sys.setenv(GEMINI_API_KEY = "fake_api_key")
 
   stub(gemini_sentiment_analysis, "httr::POST", function(...) {
     structure(list(status_code = 400), class = "response")

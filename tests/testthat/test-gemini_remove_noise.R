@@ -1,5 +1,7 @@
 library(testthat)
 library(httr)
+library(mockery)
+library(jsonlite)
 
 test_that("gemini_remove_noise handles different responses for single input", {
   # Define the correct mock API response
@@ -96,7 +98,7 @@ test_that("gemini_remove_noise handles invalid API key error", {
   original_api_key <- Sys.getenv("GEMINI_API_KEY")
   on.exit(Sys.setenv(GEMINI_API_KEY = original_api_key))
 
-  Sys.unsetenv("GEMINI_API_KEY")
+  Sys.setenv(GEMINI_API_KEY = "fake_api_key")
 
   stub(gemini_remove_noise, "httr::POST", function(...) {
     structure(list(status_code = 400), class = "response")
