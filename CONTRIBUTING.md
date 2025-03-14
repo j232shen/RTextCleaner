@@ -5,17 +5,11 @@ We welcome all contributions to this project! If you notice a bug, have a featur
 ## Contribution Guidelines
 
 - Follow R best practices and maintain readability.
-
 - Ensure function names and arguments are descriptive.
-
 - Write modular and reusable code where possible.
-
 - Use consistent formatting (e.g., tidyverse style guide).
-
 - Include comments and documentation for your code.
-
 - Write meaningful commit messages.
-
 - Make sure your changes do not break existing functionality.
 
 ## Code of Conduct
