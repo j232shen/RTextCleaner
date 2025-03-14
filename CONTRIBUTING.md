@@ -12,6 +12,12 @@ We welcome all contributions to this project! If you notice a bug, have a featur
 - Write meaningful commit messages.
 - Make sure your changes do not break existing functionality.
 
+## Responsibilities
+
+- Jingran Zhao - Separation of Code and Text
+- Skylar Shao - Remove Noise & Text Normalization
+- Jane Shen - Text Simplification & Token Frequency Visualization (Before vs. After)
+
 ## Code of Conduct
 
 All contributors must abide  by our [Code of Conduct](https://github.com/j232shen/RTextCleaner/blob/main/CODE_OF_CONDUCT.md). Please make sure to read and understand it before participating.
