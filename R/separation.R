@@ -115,10 +115,13 @@ separate_code_prompt <- function(text_inputs,
                                  model = "gemini-2.0-flash",
                                  api_key = Sys.getenv("GEMINI_API_KEY")) {
 
-  if(nchar(api_key) < 1) {
-    api_key <- readline("Paste your API key here: ")
-    Sys.setenv(GEMINI_API_KEY = api_key)
-  }
+  # =================================== COPY ===================================
+  # check for empty input and input type
+  check_valid_inputs(text_inputs)
+
+  # check for api key in environment; prompt for key if none exists
+  check_api_key(api_key)
+  # ============================================================================
 
 
   model_query <- paste0(model, ":generateContent")
@@ -338,10 +341,10 @@ separate_code_prompt <- function(text_inputs,
       return(NULL)
     })
 
-    if (is.null(response) || response$status_code != 200) {
-      warning("Error - API request failed with status: ", response$status_code)
-      next
-    }
+    # ================================== COPY ==================================
+    # check for response error
+    check_response_status(response)
+    # ==========================================================================
 
     candidates <- content(response)$candidates
     #print(str(candidates))
