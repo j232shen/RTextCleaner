@@ -30,23 +30,14 @@ gemini_remove_noise <- function(text_inputs,
                                 api_key = Sys.getenv("GEMINI_API_KEY"),
                                 model = "gemini-2.0-flash") {
 
-  # Validate API key
-  if (nchar(api_key) < 1) {
-    api_key <- readline("Paste your API key here: ")
-    Sys.setenv(GEMINI_API_KEY = api_key)
-  }
+  # check for empty input and input type
+  check_valid_inputs(text_inputs)
 
-  # Validate input type
-  if (!is.character(text_inputs)) {
-    stop("Error: text_inputs must be a character vector.")
-  }
-
-  # Check for empty input
-  if (length(text_inputs) == 0) {
-    stop("Error: text_inputs cannot be empty.")
-  }
+  # check for api key in environment; prompt for key if none exists
+  check_api_key(api_key)
 
   model_query <- paste0(model, ":generateContent")
+
   responses <- character(length(text_inputs))
 
   for (idx in seq_along(text_inputs)) {
@@ -71,17 +62,12 @@ gemini_remove_noise <- function(text_inputs,
 
     print(paste("Processing", idx, "of", length(text_inputs)))
 
-    # Ensure we don't exceed 15 requests per minute
-    if (exists("request_times", envir = .GlobalEnv)) {
-      request_times <- get("request_times", envir = .GlobalEnv)
-    } else {
-      request_times <- numeric(0)
-    }
-
+    # ensure we don't exceed 15 requests per minute
     current_time <- Sys.time()
-    if (length(request_times) == 15) {
-      time_since_first_request <- as.numeric(difftime(current_time, request_times[1], units = "secs"))
-      if (time_since_first_request < 60) {
+    if(length(rate_limit_env$request_times) == 15) {
+      time_since_first_request <- as.numeric(difftime(current_time, rate_limit_env$request_times[1], units = "secs"))
+
+      if(time_since_first_request < 60) {
         wait_time <- 60 - time_since_first_request
         print(paste("Rate limit reached. Waiting", round(wait_time, 2), "seconds..."))
         Sys.sleep(wait_time)
@@ -106,12 +92,8 @@ gemini_remove_noise <- function(text_inputs,
       )
     )
 
-    # Handle API response errors
-    if (response$status_code != 200) {
-      response_content <- httr::content(response)
-      error_message <- if (!is.null(response_content$error$message)) response_content$error$message else "Unknown API error"
-      stop(paste("Error -", error_message))
-    }
+    # check for response error
+    check_response_status(response)
 
     # Extract response
     response_content <- httr::content(response)
@@ -124,11 +106,10 @@ gemini_remove_noise <- function(text_inputs,
     responses[idx] <- gsub("\n", "", response_content$candidates[[1]]$content$parts[[1]]$text)
 
     # Record request time
-    request_times <- c(request_times, current_time)
-    if (length(request_times) > 15) {
-      request_times <- request_times[-1]
+    rate_limit_env$request_times <- c(rate_limit_env$request_times, current_time)
+    if (length(rate_limit_env$request_times) > 15) {
+      rate_limit_env$request_times <- rate_limit_env$request_times[-1]
     }
-    assign("request_times", request_times, envir = .GlobalEnv)
   }
 
   return(responses)
