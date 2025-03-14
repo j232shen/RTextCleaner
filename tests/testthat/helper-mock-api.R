@@ -1,4 +1,3 @@
-# File: tests/testthat/helper-mock_api.R
 # Helper functions for mocking API interactions in tests
 
 #' Create a mock successful POST response
@@ -94,13 +93,13 @@ mock_sleep_fn <- function() {
 #'
 #' @return Invisibly returns the previous request_times value
 setup_rate_limit_test <- function() {
-  old_times <- if (exists("request_times", envir = .GlobalEnv)) {
-    get("request_times", envir = .GlobalEnv)
+  old_times <- if (exists("request_times", envir = rate_limit_env)) {
+    rate_limit_env$request_times
   } else {
     numeric(0)
   }
 
-  assign("request_times", rep(Sys.time(), 15), envir = .GlobalEnv)
+  rate_limit_env$request_times <- rep(Sys.time(), 15)
 
   invisible(old_times)
 }

@@ -1,15 +1,13 @@
-#' @importFrom httr POST content content_type_json
-#' @importFrom jsonlite fromJSON toJSON
-
-library(httr)
-library(jsonlite)
-
-
 #' Remove Noise from Text Using Gemini API
 #'
 #' This function removes unwanted noise, excessive punctuation, and redundant characters from a given text.
+#'
+#' @importFrom httr POST content content_type_json
+#' @importFrom jsonlite fromJSON toJSON
+#'
 #' @title Remove Noise from Text Using Gemini API
 #' @name gemini_remove_noise
+#'
 #' @param text_inputs A character vector containing text to be cleaned.
 #' @param temperature A numeric value controlling response randomness (default: 1).
 #' @param max_output_tokens Maximum number of tokens in the response (default: 1024).
@@ -17,7 +15,10 @@ library(jsonlite)
 #' @param model The Gemini model version to use (default: "gemini-2.0-flash").
 #'
 #' @return A character vector of cleaned text.
+#'
+#' @keywords internal
 #' @export
+#'
 #' @examples
 #' \dontrun{
 #' text_samples <- c("Hiiii!!!    How are youuuu???", "OMG!!!!! This is soooooo coooool!!!")

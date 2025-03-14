@@ -38,3 +38,4 @@ text_samples <- c("Hiiii!!!    How are youuuu???", "OMG!!!!! This is soooooo coo
 print(gemini_remove_noise(text_samples))
 }
 }
+\keyword{internal}

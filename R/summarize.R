@@ -1,6 +1,3 @@
-library(httr)
-library(jsonlite)
-
 prompt <- "TASK: Please summarize the following technical text into 4-5 sentences. Focus on rephrasing the main points in a clear and concise manner. Avoid jargon, or rephrase any complex technical terms into simple, layman-friendly language so that the summary is easily digestible for someone without expertise in the field. The tone should be neutral and objective, and the summary should cover the most important insights from the text, ensuring that the essence of the content is preserved without overwhelming details.
 
 STRICT RULES:

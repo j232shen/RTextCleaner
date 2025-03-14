@@ -1,14 +1,20 @@
-#' Tokenize text into individual words
+#' Tokenize Text into Individual Words
 #'
 #' Breaks down text into individual tokens (words) for frequency analysis.
 #' Converts to lowercase, removes punctuation, numbers, and common stopwords.
+#'
+#' @importFrom utils adist
+#' @importFrom stats reorder
 #'
 #' @param text_inputs A character vector containing text to tokenize
 #'
 #' @return A character vector of tokens
 #' @keywords internal
-tokenize_text <- function(text_inputs) {
+#' @name tokenize_text
+#' @title Tokenize Text into Individual Words
+#' @description Breaks down text into individual tokens (words) for frequency analysis. Converts to lowercase, removes punctuation, numbers, and common stopwords.
 
+tokenize_text <- function(text_inputs) {
   # handle NULL or empty input
   if(is.null(text_inputs) || length(text_inputs) == 0) {
     stop("Input is empty or NULL.")

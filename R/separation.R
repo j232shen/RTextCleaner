@@ -1,15 +1,11 @@
-library(httr)
-library(jsonlite)
-library(tidyr)
-library(dplyr)
-library(readr)
-library(purrr)
-library(stringr)
 #' Separate Natural Language Text and Code
 #'
 #' This function analyzes the given text and separates it into two parts:
 #' (1) Natural language text without code.
 #' (2) Mixed content containing both text and code.
+#'
+#' @importFrom stringr str_replace_all
+#' @importFrom httr add_headers
 #'
 #' @param text_inputs A character string containing the text to be analyzed.
 #' @param temperature A numeric value controlling response randomness (default: 1).

@@ -2,7 +2,7 @@
 % Please edit documentation in R/visualize_normalization.R
 \name{tokenize_text}
 \alias{tokenize_text}
-\title{Tokenize text into individual words}
+\title{Tokenize Text into Individual Words}
 \usage{
 tokenize_text(text_inputs)
 }
@@ -13,6 +13,11 @@ tokenize_text(text_inputs)
 A character vector of tokens
 }
 \description{
+Breaks down text into individual tokens (words) for frequency analysis. Converts to lowercase, removes punctuation, numbers, and common stopwords.
+}
+\details{
+Tokenize Text into Individual Words
+
 Breaks down text into individual tokens (words) for frequency analysis.
 Converts to lowercase, removes punctuation, numbers, and common stopwords.
 }
