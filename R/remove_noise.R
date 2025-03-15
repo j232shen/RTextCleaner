@@ -21,8 +21,8 @@
 #'
 #' @examples
 #' \dontrun{
-#' text_samples <- c("Hiiii!!!    How are youuuu???", "OMG!!!!! This is soooooo coooool!!!")
-#' print(gemini_remove_noise(text_samples))
+#'   text_samples <- c("Hiiii!!!    How are youuuu???", "OMG!!!!! This is soooooo coooool!!!")
+#'   print(gemini_remove_noise(text_samples))
 #' }
 
 gemini_remove_noise <- function(text_inputs,

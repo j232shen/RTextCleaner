@@ -3,9 +3,6 @@
 #' Breaks down text into individual tokens (words) for frequency analysis.
 #' Converts to lowercase, removes punctuation, numbers, and common stopwords.
 #'
-#' @importFrom utils adist
-#' @importFrom stats reorder
-#'
 #' @param text_inputs A character vector containing text to tokenize
 #'
 #' @return A character vector of tokens
@@ -52,6 +49,11 @@ tokenize_text <- function(text_inputs) {
 #'
 #' Creates a visualization highlighting the tokens that changed most significantly
 #' after normalization, focusing on spelling corrections and informal language conversion.
+#'
+#' @import ggplot2
+#' @import dplyr
+#' @importFrom utils adist
+#' @importFrom stats reorder
 #'
 #' @param top_n Number of most significant changes to display (default: 20)
 #' @param original_text Original text vector (optional if normalization was run)

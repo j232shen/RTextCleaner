@@ -23,4 +23,5 @@ Imports:
     testthat,
     stringr,
     utils,
-    stats
+    stats,
+    ggplot2

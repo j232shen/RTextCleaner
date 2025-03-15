@@ -20,11 +20,11 @@ library(jsonlite)
 #' @export
 #'
 #' @examples
-#'
-#' text_samples <- c("I love pizza, sushi, and burgers!", "I hate horror movies. They're terrible.")
-#' sentiment_results <- gemini_sentiment_analysis(text_samples)
-#' print(sentiment_results)
-#'
+#' \dontrun{
+#'   text_samples <- c("I love pizza, sushi, and burgers!", "I hate horror movies. They're terrible.")
+#'   sentiment_results <- gemini_sentiment_analysis(text_samples)
+#'   print(sentiment_results)
+#' }
 
 gemini_sentiment_analysis <- function(text_inputs,
                                       temperature = 1,

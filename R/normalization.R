@@ -20,10 +20,11 @@ library(jsonlite)
 #' @export
 #'
 #' @examples
-#'
-#' text_samples <- c("omg dis is da best day evr!!!", "yayyy, tysm this is sooo gr8!!!")
-#' normalized_text <- gemini_text_normalization(text_samples)
-#' print(normalized_text)
+#' \dontrun{
+#'   text_samples <- c("omg dis is da best day evr!!!", "yayyy, tysm this is sooo gr8!!!")
+#'   normalized_text <- gemini_text_normalization(text_samples)
+#'   print(normalized_text)
+#' }
 
 gemini_text_normalization <- function(text_inputs,
                                       temperature = 1,
@@ -132,6 +133,3 @@ gemini_text_normalization <- function(text_inputs,
 
   return(responses)
 }
-
-# text_input <- c("omg dis is da best day evr!!!", "yayyy, tysm this is sooo gr8!!! i cant beleive their is only twwo dayz left!!!!!")
-# gemini_text_normalization(text_input)

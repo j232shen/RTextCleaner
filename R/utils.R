@@ -1,3 +1,6 @@
+# suppress warnings for global variables
+utils::globalVariables(c("transformation", "count"))
+
 # create an environment to hold request times
 rate_limit_env <- new.env()
 rate_limit_env$request_times <- numeric(0)

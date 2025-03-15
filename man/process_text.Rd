@@ -31,7 +31,7 @@ This function analyzes the given text and separates it into two parts:
 }
 \examples{
 \dontrun{
-sample_text <- "Here is some text. ```python print('Hello, World!') ```"
-separate_code_prompt(sample_text)
+  sample_text <- "Here is some text. ```python print('Hello, World!') ```"
+  separate_code_prompt(sample_text)
 }
 }
