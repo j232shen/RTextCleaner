@@ -1,6 +1,3 @@
-library(httr)
-library(jsonlite)
-
 prompt <- "TASK: Please summarize the following technical text into 4-5 sentences. Focus on rephrasing the main points in a clear and concise manner. Avoid jargon, or rephrase any complex technical terms into simple, layman-friendly language so that the summary is easily digestible for someone without expertise in the field. The tone should be neutral and objective, and the summary should cover the most important insights from the text, ensuring that the essence of the content is preserved without overwhelming details.
 
 STRICT RULES:
@@ -8,9 +5,6 @@ STRICT RULES:
 - Do not include any extra commentary or add unrelated content.
 
 ===== INPUT BELOW ====="
-
-# Initialize deque to track request times
-assign("request_times", numeric(0), envir = .GlobalEnv)
 
 #' Summarize Technical Text using Gemini API
 #'
@@ -39,13 +33,11 @@ summarize <- function(text_inputs,
                       api_key=Sys.getenv("GEMINI_API_KEY"),
                       model = "gemini-2.0-flash") {
 
-  # =================================== COPY ===================================
   # check for empty input and input type
   check_valid_inputs(text_inputs)
 
   # check for api key in environment; prompt for key if none exists
   check_api_key(api_key)
-  # ============================================================================
 
   model_query <- paste0(model, ":generateContent")
 
@@ -61,8 +53,9 @@ summarize <- function(text_inputs,
 
     # ensure we don't exceed 15 requests per minute
     current_time <- Sys.time()
-    if(length(request_times) == 15) {
-      time_since_first_request <- as.numeric(difftime(current_time, request_times[1], units = "secs"))
+    if(length(rate_limit_env$request_times) == 15) {
+      time_since_first_request <- as.numeric(difftime(current_time, rate_limit_env$request_times[1], units = "secs"))
+
       if(time_since_first_request < 60) {
         wait_time <- 60 - time_since_first_request
         print(paste("Rate limit reached. Waiting", round(wait_time, 2), "seconds..."))
@@ -88,10 +81,8 @@ summarize <- function(text_inputs,
       )
     )
 
-    # ================================== COPY ==================================
     # check for response error
     check_response_status(response)
-    # ==========================================================================
 
     # extract candidates
     candidates <- content(response)$candidates
@@ -102,10 +93,9 @@ summarize <- function(text_inputs,
       responses[idx] <- response_text
     }
 
-    # record the timestamp of the request
-    request_times <<- c(request_times, current_time)
-    if(length(request_times) > 15) {
-      request_times <<- request_times[-1]
+    rate_limit_env$request_times <- c(rate_limit_env$request_times, current_time)
+    if (length(rate_limit_env$request_times) > 15) {
+      rate_limit_env$request_times <- rate_limit_env$request_times[-1]
     }
   }
 

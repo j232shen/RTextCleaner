@@ -31,8 +31,9 @@ This function normalizes a column of text inputs by correcting capitalization, f
 and expanding informal abbreviations while maintaining readability and meaning.
 }
 \examples{
-
-text_samples <- c("omg dis is da best day evr!!!", "yayyy, tysm this is sooo gr8!!!")
-normalized_text <- gemini_text_normalization(text_samples)
-print(normalized_text)
+\dontrun{
+  text_samples <- c("omg dis is da best day evr!!!", "yayyy, tysm this is sooo gr8!!!")
+  normalized_text <- gemini_text_normalization(text_samples)
+  print(normalized_text)
+}
 }
