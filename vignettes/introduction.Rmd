@@ -1,0 +1,153 @@
+---
+title: "RTextCleaner: Text Processing and Cleaning Package"
+author: "Jane Shen, Jingran Zhao, Skylar Shao"
+output: rmarkdown::html_vignette
+date: "`r Sys.Date()`"
+vignette: >
+  %\VignetteIndexEntry{RTextCleaner: Text Processing and Cleaning Package}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+
+```{r setup, include=FALSE}
+library(RTextCleaner)
+library(testthat)
+library(mockery)
+```
+
+## Introduction
+
+`RTextCleaner` is an R package designed for efficient text processing and cleaning. It includes functions to:
+- Separate code from text
+- Remove noise
+- Normalize text
+- Perform sentiment analysis
+- Simplify text
+- Visualize token frequency changes before and after processing
+
+These features help users prepare raw text for analysis, making it particularly useful for **Natural Language Processing (NLP)** tasks and cleaning text data.
+
+## Installation
+
+To install `RTextCleaner`, run:
+
+```r
+remotes::install_github("yourusername/RTextCleaner")
+```
+
+## Usage Examples
+
+### 1. Separating Code from Text
+
+The `separate_code_prompt` function extracts programming code from natural language text.
+
+```{r}
+text_sample <- "Here is some text. ```python print('Hello, World!') ```"
+result <- separate_code_prompt(text_sample)
+print(result)
+```
+
+#### Test Case
+```{r}
+test_that("separate_code_prompt works correctly", {
+  test_input <- "Here is a simple Python function:\n```python\ndef add(a, b):\n    return a + b\n```"
+  
+  mock_response <- list(
+    candidates = list(
+      list(content = list(
+        parts = list(
+          list(text = '{"text": "Here is a simple Python function:", "code": "def add(a, b):\n    return a + b"}')
+        )
+      ))
+    )
+  )
+  
+  stub(separate_code_prompt, "httr::POST", function(...) {
+    structure(list(status_code = 200), class = "response")
+  })
+  stub(separate_code_prompt, "httr::content", function(...) mock_response)
+  
+  result <- separate_code_prompt(test_input)
+  expect_equal(result$text, "Here is a simple Python function:")
+  expect_equal(result$code, "def add(a, b):\n    return a + b")
+})
+```
+
+### 2. Removing Noise from Text
+
+```{r}
+noisy_text <- "OMG!!!!! This is soooo cooool!!!"
+cleaned_text <- gemini_remove_noise(noisy_text)
+print(cleaned_text)
+```
+
+#### Test Case
+```{r}
+test_that("gemini_remove_noise works correctly", {
+  test_input <- "OMG!!!!! This is soooo cooool!!!"
+  expected_output <- "OMG! This is so cool!"
+  
+  mock_response <- list(
+    candidates = list(
+      list(content = list(
+        parts = list(
+          list(text = expected_output)
+        )
+      ))
+    )
+  )
+  
+  stub(gemini_remove_noise, "httr::POST", function(...) {
+    structure(list(status_code = 200), class = "response")
+  })
+  stub(gemini_remove_noise, "httr::content", function(...) mock_response)
+  
+  result <- gemini_remove_noise(test_input)
+  expect_equal(result, expected_output)
+})
+```
+
+### 3. Normalizing Text
+
+```{r}
+text_samples <- c("omg dis is da best day evr!!!", "yayyy, tysm this is sooo gr8!!!")
+normalized_text <- gemini_text_normalization(text_samples)
+print(normalized_text)
+```
+
+### 4. Sentiment Analysis
+
+```{r}
+text_samples <- c("I love pizza, sushi, and burgers!", "I hate horror movies. They're terrible.")
+sentiment_results <- gemini_sentiment_analysis(text_samples)
+print(sentiment_results)
+```
+
+### 5. Text Simplification
+
+```{r}
+complex_text <- "Quantum computing leverages the principles of quantum mechanics to perform computations exponentially faster than classical computers."
+simplified_text <- gemini_text_simplification(complex_text)
+print(simplified_text)
+```
+
+### 6. Visualizing Token Frequency Before and After Processing
+
+```{r}
+visualize_normalization(top_n = 20)
+```
+
+## Conclusion
+
+The `RTextCleaner` package provides powerful text processing tools that enhance NLP workflows. It includes functions for **text normalization, noise removal, sentiment analysis, and visualization** to improve data quality for analysis.
+
+For issues or contributions, visit the [GitHub Repository](https://github.com/j232shen/RTextCleaner).
