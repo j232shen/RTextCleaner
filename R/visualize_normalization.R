@@ -155,15 +155,15 @@ visualize_normalization <- function(top_n = 20, original_text = NULL, normalized
   all_changes <- do.call(rbind, changes)
 
   # count how many times each transformation occurred
-  changes_table <- table(paste(all_changes$original, "→", all_changes$normalized))
+  changes_table <- table(paste(all_changes$original, "->", all_changes$normalized))
   changes_df <- data.frame(
     transformation = names(changes_table),
     count = as.numeric(changes_table)
   )
 
   # extract original and normalized components
-  changes_df$original <- sapply(strsplit(changes_df$transformation, " → "), `[`, 1)
-  changes_df$normalized <- sapply(strsplit(changes_df$transformation, " → "), `[`, 2)
+  changes_df$original <- sapply(strsplit(changes_df$transformation, " -> "), `[`, 1)
+  changes_df$normalized <- sapply(strsplit(changes_df$transformation, " -> "), `[`, 2)
 
   # get top transformations
   top_changes <- changes_df[order(-changes_df$count), ][1:min(top_n, nrow(changes_df)), ]

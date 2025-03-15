@@ -20,7 +20,6 @@ Imports:
     readr,
     purrr,
     mockery,
-    testthat,
     stringr,
     utils,
     stats,
