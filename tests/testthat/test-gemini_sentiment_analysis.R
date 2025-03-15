@@ -1,7 +1,7 @@
-# library(testthat)
-# library(httr)
+# # library(testthat)
+# # library(httr)
 # library(mockery)
-# library(jsonlite)
+# # library(jsonlite)
 #
 # test_input_1 <- c("I love pizza, sushi, and burgers!")
 # test_input_2 <- c("I hate horror movies. They're terrible.", "My top 3 movies are Inception, The Matrix, and Interstellar.")
@@ -53,22 +53,33 @@
 #
 #
 # test_that("gemini_sentiment_analysis handles invalid API key error", {
-#   original_api_key <- Sys.getenv("GEMINI_API_KEY")
-#   on.exit(Sys.setenv(GEMINI_API_KEY = original_api_key))
+#   original_api_key <- Sys.getenv("GEMINI_API_KEY") # save current API key
+#   on.exit(Sys.setenv(GEMINI_API_KEY = original_api_key)) # restore API key after test
 #
-#   Sys.setenv(GEMINI_API_KEY = "fake_api_key")
+#   correct_var_unset <- FALSE # flag to track if the right environment variable was unset
 #
-#   stub(gemini_sentiment_analysis, "httr::POST", function(...) {
-#     structure(list(status_code = 400), class = "response")
-#   })
+#   with_mock(
+#     # mock a HTTP response failure (status 400)
+#     `httr::POST` = mock_post_failure(),
 #
-#   stub(gemini_sentiment_analysis, "httr::content", function(...) {
-#     list(error = list(message = "API key not valid. Please pass a valid API key."))
-#   })
+#     # mock HTTP response error message to be due to invalid key
+#     `httr::content` = mock_content_error("API key not valid. Please pass a valid API key."),
 #
-#   expect_error(
-#     gemini_sentiment_analysis(c("Test input")),
-#     regexp = "API key not valid"
+#     # mock unset all environment variables due to invalid key
+#     `Sys.unsetenv` = function(x) {
+#       if (any(x == "GEMINI_API_KEY")) { # toggle flag if GEMINI_API_KEY was unset
+#         correct_var_unset <<- TRUE
+#       }
+#     },
+#     {
+#       # check if function raises error correctly using HTTP error message
+#       expect_error(
+#         gemini_sentiment_analysis(c("test input")),
+#         "Error: API key not valid. Please pass a valid API key."
+#       )
+#       # verify that GEMINI_API_KEY was unset
+#       expect_true(correct_var_unset, "GEMINI_API_KEY was not unset")
+#     }
 #   )
 # })
 #
