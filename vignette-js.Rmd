@@ -9,7 +9,7 @@ output: rmarkdown::html_vignette
 knitr::opts_chunk$set(echo = TRUE)
 devtools::load_all()
 library(RTextCleaner)
-Sys.setenv(GEMINI_API_KEY = "AIzaSyBnvClxUt8sB5VfOechJ9o-YgFVhLss_Ow")
+Sys.setenv(GEMINI_API_KEY = "insert api key here")
 ```
 
 ```{r crude, include=FALSE}
