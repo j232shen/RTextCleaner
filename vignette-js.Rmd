@@ -1,0 +1,110 @@
+---
+title: "vignette-js"
+author: "Jane Shen"
+date: "2025-03-15"
+output: rmarkdown::html_vignette
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+devtools::load_all()
+library(RTextCleaner)
+Sys.setenv(GEMINI_API_KEY = "AIzaSyBnvClxUt8sB5VfOechJ9o-YgFVhLss_Ow")
+```
+
+```{r crude, include=FALSE}
+# Access the tm package
+library(tm)
+
+# Load the crude dataset
+data("crude")
+
+# Initialize an empty vector to store cleaned documents
+documents <- vector("character", length = length(crude))
+
+# Loop through each document in the crude corpus and clean it
+for (i in 1:length(crude)) {
+  # Get the content of the current document
+  doc_text <- content(crude[[i]])
+  
+  # Remove newline characters and replace them with a space
+  doc_text_clean <- gsub("\n", " ", doc_text)
+  
+  # Remove multiple spaces and replace them with a single space
+  doc_text_clean <- gsub("\\s+", " ", doc_text_clean)
+  
+  # Trim any leading or trailing spaces
+  doc_text_clean <- trimws(doc_text_clean)
+  
+  # Store the cleaned text in the vector
+  documents[i] <- doc_text_clean
+}
+
+df <- data.frame(original = documents[9])
+```
+
+## Text Summarization
+
+Summarizing large batches of text into concise, readable summaries is a common challenge for developers. This process is particularly useful when working with long documents, such as news articles, research papers, or customer reviews, where the goal is to capture the essence of the content without losing critical details.
+
+The `summarize()` function provides an efficient solution to this problem. It generates summaries by extracting key information from long text passages while avoiding complex jargon and rephrasing technical terms into simpler, more accessible language. If the text lacks sufficient detail to form a meaningful summary, the function will return a default message: "Not enough information to summarize."
+
+This makes the `summarize()` function versatile for a variety of use cases, from preparing datasets for NLP tasks to simplifying content for non-technical audiences.
+
+### Example Usage
+
+To demonstrate how the `summarize()` function works, let’s summarize the news articles from the `crude` dataset. We can apply the summarization to the original text column and store the results in a new column, summary, as follows:
+
+```{r}
+df$summary <- summarize(df$original)
+head(df)
+```
+
+In this example, the `summarize()` function takes the long text in the original column and generates shorter, more digestible summaries. The `head(df)` call allows us to inspect the first few rows of the resulting data frame to demonstrate the effectiveness of the summary.
+
+## Visualization
+
+```{r viz-setup, include=FALSE}
+# Create a vector of misspelled text messages
+messy <- c(
+  "Thnx for ur help 2day, I rly apreshiate it",
+  "wud u pls call me l8r? i need 2 talk wit u 2day",
+  "U r so awesome!!! I can't wait 2 c u tmrw",
+  "im sorry i didnt reply, I was busy wth work",
+  "do u kno when the meeting starts? pls let me kno asap",
+  "Can u pls send me the docs by end of day? thx!",
+  "i have a quick questshun abt the report, can u help?",
+  "where did u put the files? I cant find them anywhere",
+  "lets meet at 5 pm, I hope thts ok with u",
+  "what r u up 2 this weekend? let's hang out",
+  "U got the msg I sent, rite? pls reply",
+  "gonna b running late 2day, pls dont wait for me"
+)
+
+# Create a corresponding vector with the normalized (clean) versions of the text
+clean <- c(
+  "Thanks for your help today, I really appreciate it",
+  "Would you please call me later? I need to talk with you today",
+  "You are so awesome! I can't wait to see you tomorrow",
+  "I'm sorry I didn't reply, I was busy with work",
+  "Do you know when the meeting starts? Please let me know as soon as possible",
+  "Can you please send me the documents by the end of the day? Thanks!",
+  "I have a quick question about the report, can you help?",
+  "Where did you put the files? I can't find them anywhere",
+  "Let's meet at 5 PM, I hope that's okay with you",
+  "What are you up to this weekend? Let's hang out",
+  "You got the message I sent, right? Please reply",
+  "I'm going to be running late today, please don't wait for me"
+)
+
+# Create a dataframe with 'messy' and 'clean' columns
+df <- data.frame(
+  messy = messy,
+  clean = clean,
+  stringsAsFactors = FALSE
+)
+```
+
+```{r}
+visualize_normalization(top_n = 10, original_text=df$messy, normalized_text=df$clean)
+```

@@ -19,9 +19,9 @@ knitr::opts_chunk$set(
 
 
 ```{r setup, include=FALSE}
+devtools::load_all()
 library(RTextCleaner)
-library(testthat)
-library(mockery)
+Sys.setenv(GEMINI_API_KEY = "AIzaSyBnvClxUt8sB5VfOechJ9o-YgFVhLss_Ow")
 ```
 
 ## Introduction
