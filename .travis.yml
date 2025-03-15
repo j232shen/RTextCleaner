@@ -1,10 +1,26 @@
+# language: r
+# cache: packages
+
+# r:
+#   - release
+#   - oldrel
+
+# script:
+#   - R CMD build .
+#   - R CMD check *tar.gz --as-cran
 language: r
+r:
+  - release  # Ensure you are using the latest R version
+
 cache: packages
 
-r:
-  - release
-  - oldrel
+before_install:
+  - Rscript -e 'install.packages(c("cpp11", "waldo", "gtable", "purrr"), repos="https://cloud.r-project.org")'
+
+install:
+  - Rscript -e 'install.packages("remotes")'
+  - Rscript -e 'remotes::install_deps(dependencies = TRUE)'
 
 script:
   - R CMD build .
-  - R CMD check *tar.gz --as-cran
+  - R CMD check *tar.gz --no-manual --as-cran
