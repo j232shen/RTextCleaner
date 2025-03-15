@@ -3,7 +3,7 @@
 export(gemini_remove_noise)
 export(gemini_sentiment_analysis)
 export(gemini_text_normalization)
-export(process_text)
+export(separate_code_prompt)
 export(summarize)
 export(visualize_normalization)
 import(dplyr)
