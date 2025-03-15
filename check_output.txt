@@ -1,135 +1,0 @@
-══ Documenting ═══════════════════════════════════════════════════════════════════════════════════════
-
-══ Building ══════════════════════════════════════════════════════════════════════════════════════════
-Setting env vars:
-• CFLAGS    : -Wall -pedantic
-• CXXFLAGS  : -Wall -pedantic
-• CXX11FLAGS: -Wall -pedantic
-• CXX14FLAGS: -Wall -pedantic
-• CXX17FLAGS: -Wall -pedantic
-• CXX20FLAGS: -Wall -pedantic
-── R CMD build ───────────────────────────────────────────────────────────────────────────────────────
-     checking for file ‘/Users/janeshen/Desktop/data-534/RTextCleaner/DESCRIPTION’ ...  ✔  checking for file ‘/Users/janeshen/Desktop/data-534/RTextCleaner/DESCRIPTION’
-     shell-init: error retrieving current directory: getcwd: cannot access parent directories: Operation not permitted
-     shell-init: error retrieving current directory: getcwd: cannot access parent directories: Operation not permitted
-  ─  preparing ‘RTextCleaner’:
-   checking DESCRIPTION meta-information ...  ✔  checking DESCRIPTION meta-information
-  ─  checking for LF line-endings in source and make files and shell scripts
-  ─  checking for empty or unneeded directories
-─  building ‘RTextCleaner_0.0.0.9000.tar.gz’
-     
-══ Checking ══════════════════════════════════════════════════════════════════════════════════════════
-Setting env vars:
-• _R_CHECK_CRAN_INCOMING_REMOTE_               : FALSE
-• _R_CHECK_CRAN_INCOMING_                      : FALSE
-• _R_CHECK_FORCE_SUGGESTS_                     : FALSE
-• _R_CHECK_PACKAGES_USED_IGNORE_UNUSED_IMPORTS_: FALSE
-• NOT_CRAN                                     : true
-── R CMD check ───────────────────────────────────────────────────────────────────────────────────────
-  ─  using log directory ‘/private/var/folders/1w/y2cbr0js165g3w970n3hbwqh0000gn/T/Rtmp9Zj6xJ/file2b152e5ee03/RTextCleaner.Rcheck’
-─  using R version 4.4.1 (2024-06-14)
--  ─  using platform: aarch64-apple-darwin20
-─  R was compiled by
-       Apple clang version 14.0.0 (clang-1400.0.29.202)
-       GNU Fortran (GCC) 12.2.0
-─  running under: macOS Sonoma 14.6.1
-─  using session charset: UTF-8
-\  ─  using options ‘--no-manual --as-cran’
-✔  checking for file ‘RTextCleaner/DESCRIPTION’
-─  this is package ‘RTextCleaner’ version ‘0.0.0.9000’
-─  package encoding: UTF-8
-✔  checking package namespace information
-   checking package dependencies ...|/-  ✔  checking package dependencies (559ms)
-   checking if this is a source package ...\  ✔  checking if this is a source package
-✔  checking if there is a namespace
-|     checking for executable files .../  ✔  checking for executable files
--  ✔  checking for hidden files and directories
-✔  checking for portable file names
-✔  checking for sufficient/correct file permissions
-✔  checking serialization versions
-   checking whether package ‘RTextCleaner’ can be installed ...\|/-\|/-\  ✔  checking whether package ‘RTextCleaner’ can be installed (1.6s)
-   checking installed package size ...|  ✔  checking installed package size
-/     checking package directory ...-  ✔  checking package directory
-   checking for future file timestamps ...\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-  N  checking for future file timestamps (1m 34.2s)
-\     unable to verify current time
-   checking DESCRIPTION meta-information ...|  ✔  checking DESCRIPTION meta-information
-   checking top-level files .../  N  checking top-level files
-   Non-standard files/directories found at top level:
-     ‘CODE_OF_CONDUCT.md’ ‘CONTRIBUTING.md’ ‘check_output.txt’
-✔  checking for left-over files
-✔  checking index information
-   checking package subdirectories ...-  ✔  checking package subdirectories
-   checking code files for non-ASCII characters ...\  ✔  checking code files for non-ASCII characters
-   checking R files for syntax errors ...|  ✔  checking R files for syntax errors
-   checking whether the package can be loaded .../-  ✔  checking whether the package can be loaded (371ms)
-   checking whether the package can be loaded with stated dependencies ...\|  ✔  checking whether the package can be loaded with stated dependencies
-   checking whether the package can be unloaded cleanly .../-  ✔  checking whether the package can be unloaded cleanly
-   checking whether the namespace can be loaded with stated dependencies ...\|  ✔  checking whether the namespace can be loaded with stated dependencies
-   checking whether the namespace can be unloaded cleanly .../-  ✔  checking whether the namespace can be unloaded cleanly
-\     checking loading without being on the library search path ...|/  ✔  checking loading without being on the library search path (355ms)
--\     checking dependencies in R code ...|/  N  checking dependencies in R code (597ms)
-   Namespace in Imports field not imported from: ‘mockery’
-     All declared Imports should be used.
--     checking S3 generic/method consistency ...\|  ✔  checking S3 generic/method consistency (382ms)
-   checking replacement functions .../-  ✔  checking replacement functions
-   checking foreign function calls ...\|  ✔  checking foreign function calls
-   checking R code for possible problems .../-\|/-\|/-  ✔  checking R code for possible problems (2s)
-   checking Rd files ...\  ✔  checking Rd files
-   checking Rd metadata ...|  ✔  checking Rd metadata
-   checking Rd line widths .../  ✔  checking Rd line widths
-   checking Rd cross-references ...-  ✔  checking Rd cross-references
-   checking for missing documentation entries ...\|  ✔  checking for missing documentation entries
-   checking for code/documentation mismatches .../-\|  ✔  checking for code/documentation mismatches (755ms)
-   checking Rd \usage sections .../  W  checking Rd \usage sections
-   Undocumented arguments in Rd file 'process_text.Rd'
-     ‘text’
-   Documented arguments not in \usage in Rd file 'process_text.Rd':
-     ‘text_inputs’ ‘temperature’ ‘max_output_tokens’ ‘api_key’ ‘model’
-   
--     Functions with \usage entries need to have the appropriate \alias
-   entries, and all their arguments documented.
-   The \usage entries must correspond to syntactically valid R code.
-   See chapter ‘Writing R documentation files’ in the ‘Writing R
-   Extensions’ manual.
-\|     checking Rd contents .../  ✔  checking Rd contents (435ms)
-   checking for unstated dependencies in examples ...-  ✔  checking for unstated dependencies in examples
-\     checking examples ...|/-\  ✔  checking examples (646ms)
-|     checking for unstated dependencies in ‘tests’ .../  ✔  checking for unstated dependencies in ‘tests’
-   checking tests ...-  ─  checking tests
-\     Running ‘testthat.R’|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\  |    [1s/61s]/      [1s/61s] OK
--     checking for non-standard things in the check directory ...\     * checking for non-standard things in the check directory ... OK
-|     * checking for detritus in the temp directory ... OK
-/     * DONE
--     
-\     Status: 1 WARNING, 3 NOTEs
-   See
-     ‘/private/var/folders/1w/y2cbr0js165g3w970n3hbwqh0000gn/T/Rtmp9Zj6xJ/file2b152e5ee03/RTextCleaner.Rcheck/00check.log’
-   for details.
-   
-|/- ── R CMD check results ────────────────────────────────────────────────── RTextCleaner 0.0.0.9000 ────
-Duration: 2m 46s
-
-❯ checking Rd \usage sections ... WARNING
-  Undocumented arguments in Rd file 'process_text.Rd'
-    ‘text’
-  Documented arguments not in \usage in Rd file 'process_text.Rd':
-    ‘text_inputs’ ‘temperature’ ‘max_output_tokens’ ‘api_key’ ‘model’
-  
-  Functions with \usage entries need to have the appropriate \alias
-  entries, and all their arguments documented.
-  The \usage entries must correspond to syntactically valid R code.
-  See chapter ‘Writing R documentation files’ in the ‘Writing R
-  Extensions’ manual.
-
-❯ checking for future file timestamps ... NOTE
-  unable to verify current time
-
-❯ checking top-level files ... NOTE
-  Non-standard files/directories found at top level:
-    ‘CODE_OF_CONDUCT.md’ ‘CONTRIBUTING.md’ ‘check_output.txt’
-
-❯ checking dependencies in R code ... NOTE
-  Namespace in Imports field not imported from: ‘mockery’
-    All declared Imports should be used.
-
-0 errors ✔ | 1 warning ✖ | 3 notes ✖
