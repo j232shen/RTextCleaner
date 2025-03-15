@@ -69,11 +69,11 @@ process_mixed_code <- function(text) {
   # Step 2: Remove excess whitespace
   text <- gsub("\\s+", " ", text)
 
-  print(text)
+  # print(text)
   text_part <- sub('.*"text": "(.*?)".*', "\\1", text)
   code_part <- sub('.*"code": "(.*?)".*', "\\1", text)
-  print(text_part)
-  print(code_part)
+  # print(text_part)
+  # print(code_part)
   text_part <- gsub("n", "\n", text_part)
   code_part <- gsub("n", "\n", code_part)
 
