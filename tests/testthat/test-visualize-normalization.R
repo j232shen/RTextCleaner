@@ -71,7 +71,7 @@ test_that("visualize_normalization uses last normalization when no text provided
   test_data <- create_test_data()
 
   with_mock(
-    `RTextCleaner::get_last_normalization` = mock_get_last_normalization(
+    `RTextCleaner:::get_last_normalization` = mock_get_last_normalization(
       test_data$original, test_data$normalized
     ),
     {
@@ -83,7 +83,7 @@ test_that("visualize_normalization uses last normalization when no text provided
 
 test_that("visualize_normalization throws error when no normalization data available", {
   with_mock(
-    `RTextCleaner::get_last_normalization` = mock_get_last_normalization(),
+    `RTextCleaner:::get_last_normalization` = mock_get_last_normalization(),
     {
       expect_error(
         visualize_normalization(),
