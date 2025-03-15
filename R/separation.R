@@ -4,9 +4,14 @@
 #' (1) Natural language text without code.
 #' (2) Mixed content containing both text and code.
 #'
-#' @importFrom stringr str_replace_all
+#' @import tidyr
+#' @import dplyr
+#' @import readr
+#' @import purrr
+#'
 #' @importFrom httr add_headers
 #' @importFrom jsonlite validate
+#' @importFrom stringr str_replace_all
 #'
 #' @param text_inputs A character string containing the text to be analyzed.
 #' @param temperature A numeric value controlling response randomness (default: 1).
