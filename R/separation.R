@@ -29,87 +29,6 @@
 #'   separate_code_prompt(sample_text)
 #' }
 
-process_text <- function(text) {
-  text <- gsub("\\\\n", "\n", text)
-  text<- clean_raw(text)
-  #print(text)
-  if (grepl("\"code\": \"\"", text)) {
-    return(process_pure_text(text))
-  } else if (grepl("\"text\": \"\"", text)) {
-    return(process_code(text))
-  } else {
-    return(process_mixed_code(text))
-  }
-}
-
-# Step 2: Process pure text (no code)
-process_pure_text <- function(text) {
-
-  text_clean <- gsub("\\s+", " ", text)
-  text_clean <- gsub("\\n", " ", text_clean)
-  json_text <- gsub("[^[:print:]]", "", text_clean)
-  json_text <- gsub("\n", "", json_text)
-
-  if (!validate(json_text)) {
-    warning("Invalid JSON format. Returning original text.")
-    return(list(text = text_clean, code = ""))
-  }
-
-  parsed <- fromJSON(json_text)
-  parsed_text <- parsed$text
-
-  return(list(text = parsed_text, code = ""))
-}
-
-# Step 3: Process mixed text and code
-process_mixed_code <- function(text) {
-  # Step 1: Replace 'n+' with newlines (correct pattern)
-  text <- gsub("\\n+", "\n", text)
-
-  # Step 2: Remove excess whitespace
-  text <- gsub("\\s+", " ", text)
-
-  # print(text)
-  text_part <- sub('.*"text": "(.*?)".*', "\\1", text)
-  code_part <- sub('.*"code": "(.*?)".*', "\\1", text)
-  # print(text_part)
-  # print(code_part)
-  text_part <- gsub("n", "\n", text_part)
-  code_part <- gsub("n", "\n", code_part)
-
-  code_part <- str_replace_all(code_part, "```[a-zA-Z]*\\n|```", "")
-
-  return(list(text = text_part, code = code_part))
-
-}
-
-# Step 4: Process pure code (only code)
-process_code <- function(text) {
-  # Assuming the input text is a JSON block, we clean it up
-  text_clean <- gsub("```json\\n|\\n```", "", text)  # Remove JSON block markers
-  text_clean <- gsub("\\n", " ", text_clean)  # Replace newlines with spaces
-  parsed_text <- fromJSON(text_clean)
-
-  code_only <- parsed_text$code
-
-  return(list(text = "", code = code_only))
-}
-
-
-
-
-
-clean_raw <- function(json_string){
-  # Clean up the JSON string
-  json_string <- gsub("```json\\n|\\n```", "", json_string)
-  json_string <- gsub("\\n", " ", json_string)
-  json_string <- gsub("\\s+", " ", json_string)
-  json_string <- gsub('\\\\\\"', '"', json_string)
-  json_string <- gsub("\\\\", "", json_string)
-  json_string <- gsub("\\n+", "\n", json_string)
-  return (json_string)
-}
-
 # Function to handle Gemini API call
 separate_code_prompt <- function(text_inputs,
                                  temperature = 1,
@@ -324,7 +243,17 @@ separate_code_prompt <- function(text_inputs,
       "  \"code\": \"Mental model\\ncomponent code runs --> React updates DOM --> component settles --> useEffect runs\",\n",
       "}\n\n"
     )
+    # ensure we don't exceed 15 requests per minute
+    current_time <- Sys.time()
+    if(length(rate_limit_env$request_times) == 15) {
+      time_since_first_request <- as.numeric(difftime(current_time, rate_limit_env$request_times[1], units = "secs"))
 
+      if(time_since_first_request < 60) {
+        wait_time <- 60 - time_since_first_request
+        print(paste("Rate limit reached. Waiting", round(wait_time, 2), "seconds..."))
+        Sys.sleep(wait_time)
+      }
+    }
     response <- tryCatch({
       POST(
         url = url,
@@ -364,7 +293,95 @@ separate_code_prompt <- function(text_inputs,
         warning("Failed to parse API response: ", e$message)
       })
     }
+
+    rate_limit_env$request_times <- c(rate_limit_env$request_times, current_time)
+    if (length(rate_limit_env$request_times) > 15) {
+      rate_limit_env$request_times <- rate_limit_env$request_times[-1]
+    }
   }
 
-return(responses)
+  return(responses)
 }
+
+
+process_text <- function(text) {
+  text <- gsub("\\\\n", "\n", text)
+  text<- clean_raw(text)
+  #print(text)
+  if (grepl("\"code\": \"\"", text)) {
+    return(process_pure_text(text))
+  } else if (grepl("\"text\": \"\"", text)) {
+    return(process_code(text))
+  } else {
+    return(process_mixed_code(text))
+  }
+}
+
+# Step 2: Process pure text (no code)
+process_pure_text <- function(text) {
+
+  text_clean <- gsub("\\s+", " ", text)
+  text_clean <- gsub("\\n", " ", text_clean)
+  json_text <- gsub("[^[:print:]]", "", text_clean)
+  json_text <- gsub("\n", "", json_text)
+
+  if (!validate(json_text)) {
+    warning("Invalid JSON format. Returning original text.")
+    return(list(text = text_clean, code = ""))
+  }
+
+  parsed <- fromJSON(json_text)
+  parsed_text <- parsed$text
+
+  return(list(text = parsed_text, code = ""))
+}
+
+# Step 3: Process mixed text and code
+process_mixed_code <- function(text) {
+  # Step 1: Replace 'n+' with newlines (correct pattern)
+  text <- gsub("\\n+", "\n", text)
+
+  # Step 2: Remove excess whitespace
+  text <- gsub("\\s+", " ", text)
+
+  # print(text)
+  text_part <- sub('.*"text": "(.*?)".*', "\\1", text)
+  code_part <- sub('.*"code": "(.*?)".*', "\\1", text)
+  # print(text_part)
+  # print(code_part)
+  text_part <- gsub("n", "\n", text_part)
+  code_part <- gsub("n", "\n", code_part)
+
+  code_part <- str_replace_all(code_part, "```[a-zA-Z]*\\n|```", "")
+
+  return(list(text = text_part, code = code_part))
+
+}
+
+# Step 4: Process pure code (only code)
+process_code <- function(text) {
+  # Assuming the input text is a JSON block, we clean it up
+  text_clean <- gsub("```json\\n|\\n```", "", text)  # Remove JSON block markers
+  text_clean <- gsub("\\n", " ", text_clean)  # Replace newlines with spaces
+  parsed_text <- fromJSON(text_clean)
+
+  code_only <- parsed_text$code
+
+  return(list(text = "", code = code_only))
+}
+
+
+
+
+
+clean_raw <- function(json_string){
+  # Clean up the JSON string
+  json_string <- gsub("```json\\n|\\n```", "", json_string)
+  json_string <- gsub("\\n", " ", json_string)
+  json_string <- gsub("\\s+", " ", json_string)
+  json_string <- gsub('\\\\\\"', '"', json_string)
+  json_string <- gsub("\\\\", "", json_string)
+  json_string <- gsub("\\n+", "\n", json_string)
+  return (json_string)
+}
+
