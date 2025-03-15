@@ -1,6 +1,3 @@
-library(testthat)
-library(httr)
-
 test_input_1 <- c("The quick brown fox jumps over the lazy dog.")
 test_input_2 <- rep(test_input_1, times = 2)
 
@@ -118,8 +115,8 @@ test_that("summarize waits when rate limit is reached", {
   # set up test environment where we simulate having made 15 requests already
   old_times <- setup_rate_limit_test()
 
-  # restore the original request_times when test ends
-  on.exit(assign("request_times", old_times, envir = .GlobalEnv))
+  # restore the original request times when test ends
+  on.exit(rate_limit_env$request_times <- old_times)
 
   with_mock(
     # mock a successful HTTP response (status 200)

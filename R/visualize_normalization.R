@@ -1,4 +1,4 @@
-#' Tokenize text into individual words
+#' Tokenize Text into Individual Words
 #'
 #' Breaks down text into individual tokens (words) for frequency analysis.
 #' Converts to lowercase, removes punctuation, numbers, and common stopwords.
@@ -7,8 +7,11 @@
 #'
 #' @return A character vector of tokens
 #' @keywords internal
-tokenize_text <- function(text_inputs) {
+#' @name tokenize_text
+#' @title Tokenize Text into Individual Words
+#' @description Breaks down text into individual tokens (words) for frequency analysis. Converts to lowercase, removes punctuation, numbers, and common stopwords.
 
+tokenize_text <- function(text_inputs) {
   # handle NULL or empty input
   if(is.null(text_inputs) || length(text_inputs) == 0) {
     stop("Input is empty or NULL.")
@@ -46,6 +49,11 @@ tokenize_text <- function(text_inputs) {
 #'
 #' Creates a visualization highlighting the tokens that changed most significantly
 #' after normalization, focusing on spelling corrections and informal language conversion.
+#'
+#' @import ggplot2
+#' @import dplyr
+#' @importFrom utils adist
+#' @importFrom stats reorder
 #'
 #' @param top_n Number of most significant changes to display (default: 20)
 #' @param original_text Original text vector (optional if normalization was run)
@@ -147,15 +155,15 @@ visualize_normalization <- function(top_n = 20, original_text = NULL, normalized
   all_changes <- do.call(rbind, changes)
 
   # count how many times each transformation occurred
-  changes_table <- table(paste(all_changes$original, "→", all_changes$normalized))
+  changes_table <- table(paste(all_changes$original, "->", all_changes$normalized))
   changes_df <- data.frame(
     transformation = names(changes_table),
     count = as.numeric(changes_table)
   )
 
   # extract original and normalized components
-  changes_df$original <- sapply(strsplit(changes_df$transformation, " → "), `[`, 1)
-  changes_df$normalized <- sapply(strsplit(changes_df$transformation, " → "), `[`, 2)
+  changes_df$original <- sapply(strsplit(changes_df$transformation, " -> "), `[`, 1)
+  changes_df$normalized <- sapply(strsplit(changes_df$transformation, " -> "), `[`, 2)
 
   # get top transformations
   top_changes <- changes_df[order(-changes_df$count), ][1:min(top_n, nrow(changes_df)), ]

@@ -16,6 +16,11 @@ Imports:
     httr,
     jsonlite,
     tidyr,
+    dplyr,
     readr,
+    purrr,
     mockery,
-    testthat
+    stringr,
+    utils,
+    stats,
+    ggplot2

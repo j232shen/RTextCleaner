@@ -33,9 +33,9 @@ Sentiment Analysis Using Gemini API
 This function analyzes the sentiment of text inputs and classifies them as Positive, Neutral, or Negative.
 }
 \examples{
-
-text_samples <- c("I love pizza, sushi, and burgers!", "I hate horror movies. They're terrible.")
-sentiment_results <- gemini_sentiment_analysis(text_samples)
-print(sentiment_results)
-
+\dontrun{
+  text_samples <- c("I love pizza, sushi, and burgers!", "I hate horror movies. They're terrible.")
+  sentiment_results <- gemini_sentiment_analysis(text_samples)
+  print(sentiment_results)
+}
 }

@@ -1,15 +1,17 @@
-library(httr)
-library(jsonlite)
-library(tidyr)
-library(dplyr)
-library(readr)
-library(purrr)
-library(stringr)
 #' Separate Natural Language Text and Code
 #'
 #' This function analyzes the given text and separates it into two parts:
 #' (1) Natural language text without code.
 #' (2) Mixed content containing both text and code.
+#'
+#' @import tidyr
+#' @import dplyr
+#' @import readr
+#' @import purrr
+#'
+#' @importFrom httr add_headers
+#' @importFrom jsonlite validate
+#' @importFrom stringr str_replace_all
 #'
 #' @param text_inputs A character string containing the text to be analyzed.
 #' @param temperature A numeric value controlling response randomness (default: 1).
@@ -23,8 +25,8 @@ library(stringr)
 #'
 #' @examples
 #' \dontrun{
-#' sample_text <- "Here is some text. ```python print('Hello, World!') ```"
-#' separate_code_prompt(sample_text)
+#'   sample_text <- "Here is some text. ```python print('Hello, World!') ```"
+#'   separate_code_prompt(sample_text)
 #' }
 
 process_text <- function(text) {
@@ -67,11 +69,11 @@ process_mixed_code <- function(text) {
   # Step 2: Remove excess whitespace
   text <- gsub("\\s+", " ", text)
 
-  print(text)
+  # print(text)
   text_part <- sub('.*"text": "(.*?)".*', "\\1", text)
   code_part <- sub('.*"code": "(.*?)".*', "\\1", text)
-  print(text_part)
-  print(code_part)
+  # print(text_part)
+  # print(code_part)
   text_part <- gsub("n", "\n", text_part)
   code_part <- gsub("n", "\n", code_part)
 
@@ -366,42 +368,3 @@ separate_code_prompt <- function(text_inputs,
 
 return(responses)
 }
-
-#text_inputs <- read_csv("processed_output.csv") %>%
-  #slice(1) %>%
-  #pull(Prompt)
-
-
- #result <- separate_code_prompt(text_inputs)
- #print(result)
-#example_text <- c(
-#  "iob, ents = self._filter_coref_mismatches(iob, ents, prons)",
-#  "iob = self._fix_iob_seqs(iob)"
-#)
-
-
-#text_inputs <- paste(example_text, collapse = "\n")
-#result <- separate_code_prompt(text_inputs)
-#print(result)
-
-#cat(result$text)
-
-
-#example_text <- c("What is the benefit in using this approach:",
-#                    "```",
-#                  "otelAgent, err := NewInstance('otel-agent')",
-#                  "if err := wrapError(err, 'error creating otel-agent instance'); err != nil {",
-#                  "return nil, err",
-#                  "}",
-#                  "```")
-#text_inputs <- paste(example_text, collapse = "\n")
-#result <- separate_code_prompt(text_inputs)
-#print(result)
-
-#text_inputs <- c("Here is a simple Python function:\n```python\ndef add(a, b):\n    return a + b\n```")
-#result <- separate_code_prompt(text_inputs)
-#print(result)
-
-#text_inputs <-  c("This is how you define a simple CSS rule:\n```css\np { color: blue; font-size: 14px; }\n```")
-#result <- separate_code_prompt(text_inputs)
-#print(result)

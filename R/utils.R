@@ -1,3 +1,9 @@
+# suppress warnings for global variables
+utils::globalVariables(c("transformation", "count"))
+
+# create an environment to hold request times
+rate_limit_env <- new.env()
+rate_limit_env$request_times <- numeric(0)
 
 check_valid_inputs <- function(text_inputs) {
   # check for empty input

@@ -1,7 +1,4 @@
-library(testthat)
-library(httr)
 library(mockery)
-library(jsonlite)
 
 #Text-only
 test_input_1 <- c("How to run a java class inside of a container with testcontainers?")

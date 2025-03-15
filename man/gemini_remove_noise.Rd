@@ -34,7 +34,8 @@ This function removes unwanted noise, excessive punctuation, and redundant chara
 }
 \examples{
 \dontrun{
-text_samples <- c("Hiiii!!!    How are youuuu???", "OMG!!!!! This is soooooo coooool!!!")
-print(gemini_remove_noise(text_samples))
+  text_samples <- c("Hiiii!!!    How are youuuu???", "OMG!!!!! This is soooooo coooool!!!")
+  print(gemini_remove_noise(text_samples))
 }
 }
+\keyword{internal}
